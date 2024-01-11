@@ -252,7 +252,18 @@ Sub Submit_Form()
                     If rgFound Is Nothing Then
                         Set rgFound = ThisWorkbook.Sheets("STAND").Range("C:C").Find(sOrderNumber)
                         If rgFound Is Nothing Then
-                        
+                            Set rgFound = ThisWorkbook.Sheets("MNS").Range("C:C").Find(sOrderNumber)
+                                If rgFound Is Nothing Then
+                                
+                                Else
+                                    iConfirmDuplicate = MsgBox("Order Number already exists in MNS : " & rgFound.Address & vbNewLine & vbNewLine _
+                                    & "Submitting will create duplicate serial numbers For this order" & vbNewLine _
+                                    & "Are you sure you want To proceed?", vbYesNo + vbQuestion, "WARNING: Duplicate Order Found")
+                                    If iConfirmDuplicate = vbNo Then
+                                        shForm.Range("I5") = ""
+                                        Exit Sub
+                                    End If
+                                End If
                         Else
                             iConfirmDuplicate = MsgBox("Order Number already exists in STAND : " & rgFound.Address & vbNewLine & vbNewLine _
                             & "Submitting will create duplicate serial numbers For this order" & vbNewLine _
@@ -380,7 +391,7 @@ Sub Submit_Form()
                         ElseIf sModelName = "MNS" Then
                             .Range(8) = sServoFirmware 'servo program
                         Else
-                            .Range(8) = sPLCFirmware & sPLCFileExt 'plc program
+                            .Range(8) = sPLCFirmware & sPantherOptions & sPLCFileExt 'plc program
                             .Range(9) = sHMIFirmware & sHMIFileExt 'hmi program
                         End If
                     End With
@@ -583,7 +594,7 @@ End Sub
 Sub Validate_Options_Input()
     'Check Options field and Compare with the Model Name to see if combination is possible
     If (sPantherOptions = "AE") Then
-        If (sModelName = "Flex") Or (sModelName = "P5c") Or (sModelName = "Shadow") Or (sModelName = "STAND") Then
+        If (sModelName = "Flex") Or (sModelName = "P5c") Or (sModelName = "Shadow") Or (sModelName = "STAND") Or (sModelName = "Predator Straight Tamp (Beijer)") Then
             MsgBox "A " & sModelName & " Machine Can't Have Auto Height or Expansion as an Option."
             shForm.Range("I5") = ""
             End
@@ -597,7 +608,7 @@ Sub Validate_Options_Input()
         End If
     ElseIf sPantherOptions = "E" Then
         If (sModelName = "Predator Straight Tamp (Beijer)") Or (sModelName = "Flex") Or (sModelName = "P5c") _
-        Or (sModelName = "Shadow") Or (sModelName = "STAND") Then
+        Or (sModelName = "Shadow") Or (sModelName = "STAND") Or (sModelName = "Predator Straight Tamp (Beijer)") Then
             MsgBox "A " & sModelName & " Machine Can't Have Expansion as an Option."
             shForm.Range("I5") = ""
             End
