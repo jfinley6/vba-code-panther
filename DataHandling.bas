@@ -327,10 +327,13 @@ Sub Submit_Form()
                 MsgBox "Panther Model Does Not Have A Corresponding Firmware. Please Check Dictionary File And Try Again!"
                 Exit For
             End If
+            sPantherOptions = shForm.Range("J" & iMachineRow).Value
+            
+            Validate_Options_Input
             
             iNumOrdered = shForm.Range("H" & iMachineRow)
             sLabelSize = shForm.Range("I" & iMachineRow)
-            sPantherOptions = shForm.Range("J" & iMachineRow).Value
+            
             If Right(sPantherModel, 5) = "XP-LH" Or Right(sPantherModel, 2) = "XP" Then
                 sPantherPLC = "XP"
             Else
@@ -352,7 +355,7 @@ Sub Submit_Form()
                     Set NewRow = loTable.ListRows.Add
                     
                     'Print Worksheet to Default Printer
-                    Print_Screen
+                    'Print_Screen
                     
                     With NewRow
                         'increment serial number
