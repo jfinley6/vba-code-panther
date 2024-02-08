@@ -334,7 +334,7 @@ Sub Submit_Form()
             iNumOrdered = shForm.Range("H" & iMachineRow)
             sLabelSize = shForm.Range("I" & iMachineRow)
             
-            If Right(sPantherModel, 5) = "XP-LH" Or Right(sPantherModel, 2) = "XP" Then
+            If Right(sPantherModel, 5) = "XP-LH" Or Right(sPantherModel, 2) = "XP" Or InStr(sPantherModel, "XP") <> 0 Then
                 sPantherPLC = "XP"
             Else
                 sPantherPLC = ""
@@ -355,7 +355,7 @@ Sub Submit_Form()
                     Set NewRow = loTable.ListRows.Add
                     
                     'Print Worksheet to Default Printer
-                    'Print_Screen
+                    Print_Screen
                     
                     With NewRow
                         'increment serial number
