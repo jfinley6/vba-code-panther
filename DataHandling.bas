@@ -598,7 +598,7 @@ Sub Validate_Options_Input()
     'Check Options field and Compare with the Model Name to see if combination is possible
     If (sPantherOptions = "AE") Then
         If (sModelName = "Flex") Or (sModelName = "P5c") Or (sModelName = "Shadow") Or (sModelName = "STAND") Or (sModelName = "Predator Straight Tamp (Beijer)") Then
-            MsgBox "A " & sModelName & " Machine Can't Have Auto Height or Expansion as an Option."
+            MsgBox "A " & sModelName & " Machine Can't Have Auto Height and or Expansion as an Option."
             shForm.Range("I5") = ""
             End
         End If
@@ -610,8 +610,8 @@ Sub Validate_Options_Input()
             End
         End If
     ElseIf sPantherOptions = "E" Then
-        If (sModelName = "Predator Straight Tamp (Beijer)") Or (sModelName = "Flex") Or (sModelName = "P5c") _
-        Or (sModelName = "Shadow") Or (sModelName = "STAND") Or (sModelName = "Predator Straight Tamp (Beijer)") Then
+        If (sModelName = "Flex") Or (sModelName = "P5c") _
+        Or (sModelName = "Shadow") Or (sModelName = "STAND") Then
             MsgBox "A " & sModelName & " Machine Can't Have Expansion as an Option."
             shForm.Range("I5") = ""
             End
