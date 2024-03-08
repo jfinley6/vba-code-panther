@@ -369,6 +369,9 @@ Sub Submit_Form()
                         ElseIf InStr(sPantherModel, "MNS") <> 0 Then
                             sSerialNumber = Application.InputBox("Please Enter Serial Number of Printer")
                             .Range(1) = sSerialNumber
+                        ElseIf InStr(sPantherModel, "P5C") <> 0 Then
+                            sSerialNumber = Application.InputBox("Please Enter Serial Number on Wiring Plate")
+                            .Range(1) = sSerialNumber
                         Else
                             .Range(1) = Application.WorksheetFunction.Max(loTable.ListColumns("Serial Number").Range) + 1 'serial number
                         End If
