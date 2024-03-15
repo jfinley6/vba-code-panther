@@ -183,8 +183,8 @@ Sub Get_Serial_Number_Label(sCustomerName, sPantherModel, sPantherPLC, sSerialNu
         + "^FS^PQ2,0,1,Y^XZ"
     Else
         sSerialNumberZPL = sLabelPart1 + sLabelPart2 + sSerialNumber + sLabelPart3 + "PLC: " + sPLCFirmware + sPantherOptions + sOptionEXP _
-        + IIf(Len(sCustomFirmware) > 0 And shForm.CheckBoxes("PLC Checkbox").Value = 1, "_" + sCustomFirmware, "") + sPLCFileExt + sLabelPart4 + "HMI: " _
-        + sHMIFirmware + IIf(Len(sCustomFirmware) > 0 And shForm.CheckBoxes("HMI Checkbox").Value = 1, "_" + sCustomFirmware, "") _
+        + IIf(Len(sCustomFirmware) > 0 And shForm.CheckBoxes("PLC Checkbox").Value = 1, sCustomFirmware, "") + sPLCFileExt + sLabelPart4 + "HMI: " _
+        + sHMIFirmware + IIf(Len(sCustomFirmware) > 0 And shForm.CheckBoxes("HMI Checkbox").Value = 1, sCustomFirmware, "") _
         + sHMIFileExt + sLabelPart5 + sServoFirmware + sServoExt + "^FS^PQ2,0,1,Y^XZ"
     End If
     
@@ -397,8 +397,8 @@ Sub Submit_Form()
                         ElseIf sModelName = "MNS" Then
                             .Range(8) = sServoFirmware 'servo program
                         Else
-                            .Range(8) = sPLCFirmware & sPantherOptions & sPLCFileExt 'plc program
-                            .Range(9) = sHMIFirmware & sHMIFileExt 'hmi program
+                            .Range(8) = sPLCFirmware & IIf(Len(sCustomFirmware) > 0 And shForm.CheckBoxes("PLC Checkbox").Value = 1, sCustomFirmware, "") & sPantherOptions & sPLCFileExt 'plc program
+                            .Range(9) = sHMIFirmware & IIf(Len(sCustomFirmware) > 0 And shForm.CheckBoxes("HMI Checkbox").Value = 1, sCustomFirmware, "") & sHMIFileExt 'hmi program
                         End If
                     End With
                 End If
