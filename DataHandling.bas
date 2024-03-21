@@ -401,6 +401,8 @@ Sub Submit_Form()
                             .Range(9) = sHMIFirmware & IIf(Len(sCustomFirmware) > 0 And shForm.CheckBoxes("HMI Checkbox").Value = 1, sCustomFirmware, "") & sHMIFileExt 'hmi program
                         End If
                     End With
+                ElseIf InStr(sPantherModel, "SLIDE") <> 0 Then
+                    Print_Tags
                 End If
                 
                 
