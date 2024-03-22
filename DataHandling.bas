@@ -47,6 +47,8 @@ Public sSystemFirmware As String
 Public sSystemExt  As String
 Public sServoFirmware As String
 Public sServoExt   As String
+Public sSlideHand As String
+Public bSlideOptions As Boolean
 
 'Examine Tag Checkboxes to see which labels to print
 Sub Get_Tag_Checkbox()
@@ -501,6 +503,7 @@ Sub Print_Tags()
         Get_Label_Strings (sPrinterName)
         
         For i = 1 To iMachinesOrdered
+            bSlideOptions = False
             
             iMachineRow = 11 + i
             
@@ -555,9 +558,13 @@ Sub Print_Tags()
                 End If
             
                 If InStr(sPantherModel, "SLIDE") <> 0 Then
-                    sLabelZPL = "^XA^LH0,0^CI0 ^FD" & sLabelPart1 & sCustomer & sLabelPart2 & sEndUser & sLabelPart3 & sPantherModel + sLabelPart4 & sLabelSize _
+                    sSlideHand = shForm.Range("J" & iMachineRow)
+                    If bSlideOptions = False Then
+                        sSlideHand = Application.InputBox("Please enter hand for " & IntToOrdinalString(iCurrent) & " " & sPantherModel & " slide")
+                    End If
+                    sLabelZPL = "^XA^LH0,0^CI0 ^FD" & sLabelPart1 & sCustomer & sLabelPart2 & sEndUser & sLabelPart3 & sPantherModel + sLabelPart4 & sSlideHand _
                                 & sLabelPart5 & CStr(iCurrent) & " of " & CStr(iNumOrdered) & sLabelPart6 & sOrderNumber & sLabelPart7 _
-                                & "^FS^PQ2^XZ"
+                                & "^FS^PQ1^XZ"
                 ElseIf InStr(sPantherModel, "STAND") <> 0 Then
                     sLabelZPL = "^XA^LH0,0^CI0 ^FD" & sLabelPart1 & sCustomer & sLabelPart2 & sEndUser & sLabelPart3 & sPantherModel + sLabelPart4 & sLabelSize _
                                 & sLabelPart5 & CStr(iCurrent) & " of " & CStr(iNumOrdered) & sLabelPart6 & sOrderNumber & sLabelPart7 _
@@ -602,27 +609,37 @@ End Sub
 Sub Validate_Options_Input()
     'Check Options field and Compare with the Model Name to see if combination is possible
     If (sPantherOptions = "AE") Then
-        If (sModelName = "Flex") Or (sModelName = "P5c") Or (sModelName = "Shadow") Or (sModelName = "STAND") Or (sModelName = "Predator Straight Tamp (Beijer)") Then
+        If (sModelName = "Flex") Or (sModelName = "P5c") Or (sModelName = "Shadow") Or (sModelName = "STAND") Or (sModelName = "Predator Straight Tamp (Beijer)") _
+        Or InStr(sPantherModel, "SLIDE") <> 0 Then
             MsgBox "A " & sModelName & " Machine Can't Have Auto Height and or Expansion as an Option."
             shForm.Range("I5") = ""
             End
         End If
     ElseIf sPantherOptions = "A" Then
         If (sModelName = "Predator Swing Arm") Or (sModelName = "Phantom") Or (sModelName = "P5c") _
-        Or (sModelName = "Flex") Or (sModelName = "Shadow") Or (sModelName = "STAND") Or (sModelName = "Predator Straight Tamp (Beijer)") Then
+        Or (sModelName = "Flex") Or (sModelName = "Shadow") Or (sModelName = "STAND") Or (sModelName = "Predator Straight Tamp (Beijer)") _
+        Or InStr(sPantherModel, "SLIDE") <> 0 Then
             MsgBox "A " & sModelName & " Machine Can't Have Auto Height as an Option."
             shForm.Range("I5") = ""
             End
         End If
     ElseIf sPantherOptions = "E" Then
         If (sModelName = "Flex") Or (sModelName = "P5c") _
-        Or (sModelName = "Shadow") Or (sModelName = "STAND") Then
+        Or (sModelName = "Shadow") Or (sModelName = "STAND") Or InStr(sPantherModel, "SLIDE") <> 0 Then
             MsgBox "A " & sModelName & " Machine Can't Have Expansion as an Option."
             shForm.Range("I5") = ""
             End
         End If
     ElseIf sPantherOptions <> "" Then
-        If sPantherOptions <> "A" Then
+        If InStr(sPantherModel, "SLIDE") <> 0 Then
+            If (sPantherOptions = "RH") Or (sPantherOptions = "LH") Then
+                bSlideOptions = True
+            Else
+                MsgBox "SLIDE Hand Must be Either RH or LH"
+                shForm.Range("I5") = ""
+                End
+                End If
+        ElseIf sPantherOptions <> "A" Then
             MsgBox "Options Must Have Either A for AutoHeight, E for Expansion, or AE for Both."
             shForm.Range("I5") = ""
             End
@@ -638,5 +655,35 @@ Sub Validate_Options_Input()
     End If
     
 End Sub
+
+Public Function IntToOrdinalString(MyNumber As Integer) As String
+    Dim sOutput As String
+    Dim iUnit As Integer
+    
+    
+    iUnit = MyNumber Mod 10
+    sOutput = ""
+    
+    Select Case MyNumber
+        Case Is < 0
+            sOutput = ""
+        Case 10 To 19
+            sOutput = "th"
+        Case Else
+            Select Case iUnit
+                Case 0 'Zeroth only has a meaning when counts start with zero, which happens in a mathematical or computer science context.
+                    sOutput = "th"
+                Case 1
+                    sOutput = "st"
+                Case 2
+                    sOutput = "nd"
+                Case 3
+                    sOutput = "rd"
+                Case 4 To 9
+                    sOutput = "th"
+            End Select
+    End Select
+    IntToOrdinalString = CStr(MyNumber) & sOutput
+End Function
 
 
