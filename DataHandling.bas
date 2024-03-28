@@ -656,6 +656,39 @@ Sub Validate_Options_Input()
     
 End Sub
 
+Sub Find_Duplicate_Values_From_Dictionary()
+
+Dim myRange As Range
+Dim i As Integer
+Dim j As Integer
+Dim myCell As Range
+Dim iOriginalCellColor As Integer
+Dim sDuplicateCells As String
+Dim duplicateFound As Boolean
+
+Set myRange = Range("FIRMWARE_DICTIONARY")
+duplicateFound = False
+
+For Each myCell In myRange
+    If WorksheetFunction.CountIf(myRange, myCell.Value) > 1 Then
+        duplicateFound = True
+        iOriginalCellColor = myCell.Interior.ColorIndex
+        myCell.Interior.ColorIndex = 3
+        sDuplicateCells = sDuplicateCells + Replace(myCell.Address, "$", "") + " "
+    End If
+Next
+
+If duplicateFound Then MsgBox "Duplicates can be found at the following cells: " & sDuplicateCells & vbCrLf & _
+        "Please remove duplicates and try again.", vbCritical
+
+For Each myCell In myRange
+    If WorksheetFunction.CountIf(myRange, myCell.Value) > 1 Then
+       myCell.Interior.ColorIndex = iOriginalCellColor
+    End If
+Next
+
+End Sub
+
 Public Function IntToOrdinalString(MyNumber As Integer) As String
     Dim sOutput As String
     Dim iUnit As Integer
