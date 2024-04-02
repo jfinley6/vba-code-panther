@@ -1,56 +1,99 @@
 Attribute VB_Name = "Dictionary"
 Sub Firmware_Dictionary(sPantherModel)
 
-    Dim myFile As String, text As String, textline As String, posLat As Integer, posLong As Integer
-    Dim sSplitString() As String
-    Dim sModelValue As String
-    
-    Dim dict
-    Set dict = CreateObject("Scripting.Dictionary")
-    
-    myFile = "H:\Service Department\Production Forms\firmware.txt"
-    
-    Open myFile For Input As #1
-    
-     Do Until EOF(1)
-        Line Input #1, textline
-        If InStr(textline, "~") <> 0 Then
-            sModelValue = Replace(Trim(textline), "~", "")
-        ElseIf InStr(textline, "/") = 0 And CStr(textline) <> "" And InStr(textline, "~") = 0 Then
-            If dict.Exists(Trim(textline)) Then
-                MsgBox (Trim(textline) & " is Duplicated in the Dictionary. Please Fix and Try Again")
-                shForm.Range("I5") = ""
-                End
-            Else
-                dict.Add Trim(textline), Trim(sModelValue)
-            End If
+Dim myTable As ListObject
+Dim myArray As Variant
+Dim i As Long
+Dim x As Long
+Dim lColumnCount As Long
+Dim bFirmwareFound As Boolean
+Dim sCurrentFirmware As String
+
+Dim testNum As Integer:
+testNum = 0
+bFirmwareFound = False
+
+Dim dict: Set dict = CreateObject("Scripting.Dictionary")
+
+'Check for duplicate model names
+Find_Duplicate_Values_From_Dictionary
+
+'Set path for Table variable
+Set myTable = Sheets("FIRMWARE DICTIONARY").ListObjects("FIRMWARE_DICTIONARY")
+  
+'Set number of Table columns
+lColumnCount = myTable.DataBodyRange.Columns.Count
+
+'Create Array List from Table
+myArray = myTable.DataBodyRange
+
+'Loop through every item in each column and see if matching firmware exists
+'TODO: Add Logic to Create Dictionary from Table
+For i = 1 To lColumnCount
+    For x = LBound(myArray) To UBound(myArray)
+        sCurrentFirmware = myTable.ListColumns(i).Name
+        'Check To See if Cell is Empty
+        If Not Trim(myArray(x, i) & vbNullString) = vbNullString Then
+            If myArray(x, i) = sPantherModel Then bFirmwareFound = True: sModelName = sCurrentFirmware: Exit For
         End If
-        
-    Loop
-    Close #1
+        Next x
+    If bFirmwareFound Then firmwareExists = True: Exit For
+    Next i
+    If Not bFirmwareFound Then firmwareExists = False
     
-    If dict.Exists(sPantherModel) Then
-        firmwareExists = True
-        sModelName = dict.Item(sPantherModel)
-    ElseIf InStr(sPantherModel, "STAND") <> 0 Then
-        firmwareExists = True
-        sModelName = "STAND"
-    ElseIf InStr(sPantherModel, "MNS") <> 0 Then
-        firmwareExists = True
-        sModelName = "MNS"
-    Else
-        firmwareExists = False
-    End If
     
+End Sub
+
+Sub test()
+    For n = 1 To Range("FIRMWARE_DICTIONARY[]").Cells(i, 1)
+        Debug.Print
+    Next n
+
 End Sub
 
 Sub Open_Dictionary()
 
-    Dim fso As Object
-    Dim sfile As String
-    Set fso = CreateObject("shell.application")
-    sfile = "H:\Service Department\Production Forms\firmware.txt"
-    fso.Open (sfile)
+    ThisWorkbook.Worksheets("FIRMWARE DICTIONARY").Activate
+
+End Sub
+
+Sub Find_Duplicate_Values_From_Dictionary()
+
+Dim myRange As Range
+Dim i As Integer
+Dim j As Integer
+Dim myCell As Range
+Dim iOriginalCellColor As Integer
+Dim sDuplicateCells As String
+Dim duplicateFound As Boolean
+
+Set myRange = Range("FIRMWARE_DICTIONARY")
+duplicateFound = False
+
+For Each myCell In myRange
+    If WorksheetFunction.CountIf(myRange, myCell.Value) > 1 Then
+        duplicateFound = True
+        iOriginalCellColor = myCell.Interior.ColorIndex
+        myCell.Interior.ColorIndex = 3
+        sDuplicateCells = sDuplicateCells + Replace(myCell.Address, "$", "") + " "
+    End If
+Next
+
+If duplicateFound Then
+
+    ThisWorkbook.Worksheets("FIRMWARE DICTIONARY").Activate
+    
+    shForm.Range("I5") = ""
+
+    MsgBox "Duplicates can be found at the following cells: " & sDuplicateCells & vbCrLf & _
+        "Please remove duplicates and try again.", vbCritical
+    For Each myCell In myRange
+        If WorksheetFunction.CountIf(myRange, myCell.Value) > 1 Then
+           myCell.Interior.ColorIndex = iOriginalCellColor
+        End If
+    Next
+    End
+End If
 
 End Sub
 
