@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} addNewModelForm 
    Caption         =   "Add Model To Dictionary"
-   ClientHeight    =   3540
+   ClientHeight    =   4110
    ClientLeft      =   120
    ClientTop       =   465
    ClientWidth     =   5220
@@ -26,7 +26,7 @@ Private Sub UserForm_Initialize()
 
     Dim ModelNumber As String
     
-    ModelNumber = "PA-P9-118e"
+    ModelNumber = sPantherModel
     
     With ModelListBox
        .AddItem "Predator Straight Tamp (WAGO)"
@@ -46,7 +46,7 @@ Private Sub UserForm_Initialize()
         .FontBold = True
     End With
     
-    InstructionLabel2.Caption = "Please select the corresponding machine from the list and click add"
+    InstructionLabel2.Caption = "Please select the corresponding machine from the list and click add."
     
     Call SetIconFromImageControl
     
@@ -54,7 +54,23 @@ End Sub
 
 Private Sub CancelButton_Click()
     Unload Me
+    shForm.Range("I5") = ""
     End
+End Sub
+
+Private Sub AddButton_Click()
+    sModelName = ModelListBox.Value
+    Call Add_To_Dictionary
+    Unload addNewModelForm
+End Sub
+
+'Clicking the red X button
+Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
+    If CloseMode = vbFormControlMenu Then
+        Unload Me
+        shForm.Range("I5") = ""
+        End
+    End If
 End Sub
 
 Private Sub SetIconFromImageControl()
