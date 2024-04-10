@@ -1,7 +1,7 @@
 Attribute VB_Name = "Dictionary"
 Sub Firmware_Dictionary(sPantherModel)
 
-Dim myTable As ListObject
+Dim MyTable As ListObject
 Dim myArray As Variant
 Dim i As Long
 Dim x As Long
@@ -19,19 +19,19 @@ Dim dict: Set dict = CreateObject("Scripting.Dictionary")
 Find_Duplicate_Values_From_Dictionary
 
 'Set path for Table variable
-Set myTable = Sheets("FIRMWARE DICTIONARY").ListObjects("FIRMWARE_DICTIONARY")
+Set MyTable = Sheets("FIRMWARE DICTIONARY").ListObjects("FIRMWARE_DICTIONARY")
   
 'Set number of Table columns
-lColumnCount = myTable.DataBodyRange.Columns.Count
+lColumnCount = MyTable.DataBodyRange.Columns.Count
 
 'Create Array List from Table
-myArray = myTable.DataBodyRange
+myArray = MyTable.DataBodyRange
 
 'Loop through every item in each column and see if matching firmware exists
 'TODO: Add Logic to Create Dictionary from Table
 For i = 1 To lColumnCount
     For x = LBound(myArray) To UBound(myArray)
-        sCurrentFirmware = myTable.ListColumns(i).Name
+        sCurrentFirmware = MyTable.ListColumns(i).Name
         'Check To See if Cell is Empty
         If Not Trim(myArray(x, i) & vbNullString) = vbNullString Then
             If myArray(x, i) = sPantherModel Then bFirmwareFound = True: sModelName = sCurrentFirmware: Exit For
@@ -45,9 +45,9 @@ For i = 1 To lColumnCount
 End Sub
 
 Sub test()
-    For n = 1 To Range("FIRMWARE_DICTIONARY[]").Cells(i, 1)
+    For N = 1 To Range("FIRMWARE_DICTIONARY[]").Cells(i, 1)
         Debug.Print
-    Next n
+    Next N
 
 End Sub
 
@@ -93,6 +93,39 @@ If duplicateFound Then
         End If
     Next
     End
+End If
+
+End Sub
+
+Sub Add_To_Dictionary(columnName, newValue As String)
+
+Dim ws As Worksheet
+Dim lastRow As Long
+Dim columnRange As Range
+Dim targetCell As Range
+Dim headerRow As Range
+Dim headerCell As Range
+Dim i As Long
+
+Set ws = ThisWorkbook.Sheets("FIRMWARE DICTIONARY")
+
+Set headerRow = ws.Rows(1)
+Set headerCell = headerRow.Find(What:=columnName, LookIn:=xlValues, LookAt:=xlWhole)
+
+If Not headerCell Is Nothing Then
+    Set columnRange = ws.Columns(headerCell.Column)
+    
+    lastRow = ws.Cells(ws.Rows.Count, headerCell.Column).End(xlUp).Row
+    
+    For i = lastRow To 1 Step -1
+        If Not IsEmpty(columnRange.Cells(i, 1)) Then
+            Set targetCell = columnRange.Cells(i + 1, 1)
+            Exit For
+        End If
+    Next i
+    
+    targetCell.Value = newValue
+
 End If
 
 End Sub
