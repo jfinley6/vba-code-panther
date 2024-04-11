@@ -22,10 +22,21 @@ Private Const WM_SETICON As Long = &H80
 Private Const ICON_SMALL As LongPtr = 0&
 Private Const ICON_BIG As LongPtr = 1&
 
+Dim ModelNumber As String
+
+'Listen for Key Presses
+Private Sub ModelListBox_KeyPress(ByVal KeyAscii As MSForms.ReturnInteger)
+    Select Case KeyAscii
+        Case 13 'enter key
+            AddButton_Click
+        Case 27 'escape key
+            CancelButton_Click
+        Case Else
+    End Select
+End Sub
+
 Private Sub UserForm_Initialize()
 
-    Dim ModelNumber As String
-    
     ModelNumber = sPantherModel
     
     With ModelListBox
@@ -60,7 +71,7 @@ End Sub
 
 Private Sub AddButton_Click()
     sModelName = ModelListBox.Value
-    Call Add_To_Dictionary
+    Call Add_To_Dictionary(sModelName, ModelNumber)
     Unload addNewModelForm
 End Sub
 
