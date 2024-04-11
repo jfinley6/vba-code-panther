@@ -50,6 +50,8 @@ Public sServoExt   As String
 Public sSlideHand As String
 Public bSlideOptions As Boolean
 
+Public sSelectedMachineName As String
+
 'Examine Tag Checkboxes to see which labels to print
 Sub Get_Tag_Checkbox()
     If shForm.CheckBoxes("Serial Number Checkbox").Value = 1 And shForm.CheckBoxes("Toe Tag Checkbox").Value = 1 Then
@@ -326,8 +328,7 @@ Sub Submit_Form()
             sPantherModel = shForm.Range("G" & iMachineRow).Value
             Call Firmware_Dictionary(sPantherModel)
             If firmwareExists = False And InStr(sPantherModel, "SLIDE") = 0 Then
-                MsgBox "Panther Model Does Not Have A Corresponding Firmware. Please Check Dictionary File And Try Again!"
-                Exit For
+                addNewModelForm.Show
             End If
             sPantherOptions = shForm.Range("J" & iMachineRow).Value
             
@@ -515,8 +516,7 @@ Sub Print_Tags()
             'Check To See If Options Work with the given model
             Validate_Options_Input
             If firmwareExists = False And InStr(sPantherModel, "SLIDE") = 0 Then
-                MsgBox "Panther Model Does Not Have A Corresponding Firmware. Please Check Dictionary File And Try Again!"
-                Exit For
+                addNewModelForm.Show
             End If
             If IsNumeric(shForm.Range("H" & iMachineRow)) = False Then
                 MsgBox sPantherModel + " Qty Must Be a Number!"
@@ -685,5 +685,3 @@ Public Function IntToOrdinalString(MyNumber As Integer) As String
     End Select
     IntToOrdinalString = CStr(MyNumber) & sOutput
 End Function
-
-
