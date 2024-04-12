@@ -2,17 +2,12 @@ Attribute VB_Name = "DataHandling"
 Option Explicit
 
 'Variables used in multiple subroutines
-Public sMacroInUse  As String
-Public shModel      As Worksheet
 Public shForm       As Worksheet
-Public loTable      As ListObject
-Public NewRow       As ListRow
 Public sOrderNumber As String
 Public sCustomer    As String
 Public sEndUser     As String
 Public sPantherModel As String
 Public sLabelSize   As String
-Public sTargetSheet As String
 Public sPrinterName As String
 Public sPrinterIP   As String
 Public sSerialNumber As String
@@ -35,9 +30,8 @@ Public iCurrent     As Integer
 Public iNumOrdered  As Integer
 Public iMachineRow  As Integer
 
-Public aPantherModel() As String
-Public firmwareExists As Variant
-Public sModelName As Variant
+Public firmwareExists As Boolean
+Public sModelName As String
 
 Public sPLCFirmware As String
 Public sPLCFileExt As String
@@ -47,7 +41,6 @@ Public sSystemFirmware As String
 Public sSystemExt  As String
 Public sServoFirmware As String
 Public sServoExt   As String
-Public sSlideHand As String
 Public bSlideOptions As Boolean
 
 Public sSelectedMachineName As String
@@ -97,11 +90,6 @@ End Sub
 Sub Get_Serial_Number_Label(sCustomerName, sPantherModel, sPantherPLC, sSerialNumber, iMachinesOrdered, sPrinterIP, iCurrent)
     Dim sOptionAHC  As String
     Dim sOptionEXP  As String
-    Dim sLabelPart1 As String
-    Dim sLabelPart2 As String
-    Dim sLabelPart3 As String
-    Dim sLabelPart4 As String
-    Dim sLabelPart5 As String
     Dim sSerialNumberZPL As String
     Dim sCurrentIP  As String
     
@@ -210,8 +198,14 @@ End Sub
 
 Sub Submit_Form()
     
-    'Variable
-    Dim i           As Integer
+    'Variables
+    Dim i               As Integer
+    Dim sMacroInUse     As String
+    Dim shModel         As Worksheet
+    Dim loTable         As ListObject
+    Dim NewRow          As ListRow
+    Dim sTargetSheet    As String
+    Dim aPantherModel() As String
     
     'Target sheets
     Set shForm = ThisWorkbook.Sheets("Form")
@@ -481,7 +475,8 @@ End Sub
 Sub Print_Tags()
     
     'Variables
-    Dim i           As Integer
+    Dim i          As Integer
+    Dim sSlideHand As String
     
     'Target sheets
     Set shForm = ThisWorkbook.Sheets("Form")
@@ -531,9 +526,6 @@ Sub Print_Tags()
             End If
             
             sLabelSize = shForm.Range("I" & iMachineRow)
-            
-            aPantherModel = Split(sPantherModel, "-")
-            sTargetSheet = aPantherModel(1)
                      
             If InStr(sPantherModel, "SLIDE") = 0 And InStr(sPantherModel, "STAND") = 0 And InStr(sPantherModel, "MNS") = 0 Then
                 sSerialNumber = Application.InputBox("Enter Starting Serial Number For " & sPantherModel, "Serial Numbers")
@@ -588,6 +580,7 @@ Sub Print_Tags()
         shForm.Range("I5") = ""
         If firmwareExists = True Then
             MsgBox ("Serial Numbers Printed")
+            Save_Document
         End If
         
     End If
