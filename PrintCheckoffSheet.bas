@@ -1,14 +1,15 @@
 Attribute VB_Name = "PrintCheckoffSheet"
-Sub Print_Screen()
+'@IgnoreModule ModuleWithoutFolder
+Option Explicit 'Force explicit variable declaration.
+Public Sub Print_Screen()
 
-    Dim sh As Worksheet
-    Dim quantity As Integer
+    Dim sheet As Worksheet
 
-    For Each sh In ThisWorkbook.Worksheets
+    For Each sheet In ThisWorkbook.Worksheets
     
-        If sh.Name = "CHECK SHEET" Then
-            sh.PrintOut
+        If sheet.Name = "CHECK SHEET" Then
+            sheet.PrintOut
         End If
-    Next sh
+    Next sheet
 
 End Sub
