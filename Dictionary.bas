@@ -1,25 +1,24 @@
 Attribute VB_Name = "Dictionary"
-Sub Firmware_Dictionary(sPantherModel)
+'@IgnoreModule ImplicitDefaultMemberAccess, IndexedDefaultMemberAccess, ProcedureNotUsed, ModuleWithoutFolder
+Option Explicit 'Force explicit variable declaration.
+
+Public Sub Firmware_Dictionary(ByVal sPantherModel As String)
 
 Dim MyTable As ListObject
 Dim myArray As Variant
 Dim i As Long
-Dim x As Long
+Dim X As Long
 Dim lColumnCount As Long
 Dim bFirmwareFound As Boolean
 Dim sCurrentFirmware As String
 
-Dim testNum As Integer:
-testNum = 0
 bFirmwareFound = False
-
-Dim dict: Set dict = CreateObject("Scripting.Dictionary")
 
 'Check for duplicate model names
 Find_Duplicate_Values_From_Dictionary
 
 'Set path for Table variable
-Set MyTable = Sheets("FIRMWARE DICTIONARY").ListObjects("FIRMWARE_DICTIONARY")
+Set MyTable = FirmwareDictionary.ListObjects("FIRMWARE_DICTIONARY")
   
 'Set number of Table columns
 lColumnCount = MyTable.DataBodyRange.Columns.Count
@@ -30,13 +29,13 @@ myArray = MyTable.DataBodyRange
 'Loop through every item in each column and see if matching firmware exists
 'TODO: Add Logic to Create Dictionary from Table
 For i = 1 To lColumnCount
-    For x = LBound(myArray) To UBound(myArray)
+    For X = LBound(myArray) To UBound(myArray)
         sCurrentFirmware = MyTable.ListColumns(i).Name
         'Check To See if Cell is Empty
-        If Not Trim(myArray(x, i) & vbNullString) = vbNullString Then
-            If myArray(x, i) = sPantherModel Then bFirmwareFound = True: sModelName = sCurrentFirmware: Exit For
+        If Not Trim$(myArray(X, i) & vbNullString) = vbNullString Then
+            If myArray(X, i) = sPantherModel Then bFirmwareFound = True: sModelName = sCurrentFirmware: Exit For
         End If
-        Next x
+        Next X
     If bFirmwareFound Then firmwareExists = True: Exit For
     Next i
     If Not bFirmwareFound Then firmwareExists = False
@@ -44,30 +43,21 @@ For i = 1 To lColumnCount
     
 End Sub
 
-Sub test()
-    For N = 1 To Range("FIRMWARE_DICTIONARY[]").Cells(i, 1)
-        Debug.Print
-    Next N
+Public Sub Open_Dictionary()
+
+    FirmwareDictionary.Activate
 
 End Sub
 
-Sub Open_Dictionary()
-
-    ThisWorkbook.Worksheets("FIRMWARE DICTIONARY").Activate
-
-End Sub
-
-Sub Find_Duplicate_Values_From_Dictionary()
+Public Sub Find_Duplicate_Values_From_Dictionary()
 
 Dim myRange As Range
-Dim i As Integer
-Dim j As Integer
 Dim myCell As Range
-Dim iOriginalCellColor As Integer
+Dim iOriginalCellColor As Long
 Dim sDuplicateCells As String
 Dim duplicateFound As Boolean
 
-Set myRange = Range("FIRMWARE_DICTIONARY")
+Set myRange = FirmwareDictionary.Range("FIRMWARE_DICTIONARY")
 duplicateFound = False
 
 For Each myCell In myRange
@@ -75,15 +65,15 @@ For Each myCell In myRange
         duplicateFound = True
         iOriginalCellColor = myCell.Interior.ColorIndex
         myCell.Interior.ColorIndex = 3
-        sDuplicateCells = sDuplicateCells + Replace(myCell.Address, "$", "") + " "
+        sDuplicateCells = sDuplicateCells + Replace(myCell.Address, "$", vbNullString) + " "
     End If
 Next
 
 If duplicateFound Then
 
-    ThisWorkbook.Worksheets("FIRMWARE DICTIONARY").Activate
+    FirmwareDictionary.Activate
     
-    shForm.Range("I5") = ""
+    shForm.Range("I5") = vbNullString
 
     MsgBox "Duplicates can be found at the following cells: " & sDuplicateCells & vbCrLf & _
         "Please remove duplicates and try again.", vbCritical
@@ -97,7 +87,7 @@ End If
 
 End Sub
 
-Sub Add_To_Dictionary(columnName, newValue As String)
+Public Sub Add_To_Dictionary(ByVal columnName As String, ByVal newValue As String)
 
 Dim ws As Worksheet
 Dim lastRow As Long
@@ -107,7 +97,7 @@ Dim headerRow As Range
 Dim headerCell As Range
 Dim i As Long
 
-Set ws = ThisWorkbook.Sheets("FIRMWARE DICTIONARY")
+Set ws = FirmwareDictionary
 
 Set headerRow = ws.Rows(1)
 Set headerCell = headerRow.Find(What:=columnName, LookIn:=xlValues, LookAt:=xlWhole)
@@ -115,8 +105,10 @@ Set headerCell = headerRow.Find(What:=columnName, LookIn:=xlValues, LookAt:=xlWh
 If Not headerCell Is Nothing Then
     Set columnRange = ws.Columns(headerCell.Column)
     
+    'Go To The Bottom Of The Column
     lastRow = ws.Cells(ws.Rows.Count, headerCell.Column).End(xlUp).Row
     
+    'Find First Empty Cell Where New Value Should Go
     For i = lastRow To 1 Step -1
         If Not IsEmpty(columnRange.Cells(i, 1)) Then
             Set targetCell = columnRange.Cells(i + 1, 1)
@@ -124,9 +116,17 @@ If Not headerCell Is Nothing Then
         End If
     Next i
     
+    'Set Value Of Target Cell
     targetCell.Value = newValue
+    
+    'Alert User Pairing Was Successful
+    If targetCell.Value = newValue Then
+        MsgBox newValue & " has been paired with " & headerCell & " successfully!"
+    End If
+    
 
 End If
 
 End Sub
+
 
