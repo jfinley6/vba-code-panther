@@ -13,6 +13,8 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+'@IgnoreModule ModuleWithoutFolder
+Option Explicit 'Force explicit variable declaration.
 'Variable declarations necessary to place image in title
 Private Declare PtrSafe Function FindWindow Lib "user32" Alias "FindWindowA" _
     (ByVal lpClassName As String, ByVal lpWindowName As String) As LongPtr
@@ -22,11 +24,11 @@ Private Const WM_SETICON As Long = &H80
 Private Const ICON_SMALL As LongPtr = 0&
 Private Const ICON_BIG As LongPtr = 1&
 
-Dim ModelNumber As String
+Private ModelNumber As String
 
 'Listen for Key Presses
 Private Sub ModelListBox_KeyPress(ByVal KeyAscii As MSForms.ReturnInteger)
-    Select Case KeyAscii
+    Select Case KeyAscii.Value
         Case 13 'enter key
             AddButton_Click
         Case 27 'escape key
@@ -59,19 +61,19 @@ Private Sub UserForm_Initialize()
     
     InstructionLabel2.Caption = "Please select the corresponding machine from the list and click add."
     
-    Call SetIconFromImageControl
+    SetIconFromImageControl
     
 End Sub
 
 Private Sub CancelButton_Click()
     Unload Me
-    shForm.Range("I5") = ""
+    shForm.Range("I5").Value = vbNullString
     End
 End Sub
 
 Private Sub AddButton_Click()
     sModelName = ModelListBox.Value
-    Call Add_To_Dictionary(sModelName, ModelNumber)
+    Add_To_Dictionary sModelName, ModelNumber
     Unload addNewModelForm
 End Sub
 
@@ -79,19 +81,24 @@ End Sub
 Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
     If CloseMode = vbFormControlMenu Then
         Unload Me
-        shForm.Range("I5") = ""
+        shForm.Range("I5").Value = vbNullString
         End
     End If
 End Sub
 
+
 Private Sub SetIconFromImageControl()
     On Error GoTo errExit
-    Dim hWnd As LongPtr, hIcon As LongPtr
-    hWnd = FindWindow("ThunderDFrame", Caption)
-    hIcon = ImageForIcon.Picture.Handle
+    Dim hWnd As LongPtr
+    Dim hIcon As LongPtr
+
+    hWnd = FindWindow("ThunderDFrame", Me.Caption)
+    hIcon = Me.ImageForIcon.Picture.Handle
     If hWnd <> 0 And hIcon <> 0 Then
         SendMessage hWnd, WM_SETICON, ICON_SMALL, hIcon
         SendMessage hWnd, WM_SETICON, ICON_BIG, hIcon
     End If
 errExit:
 End Sub
+
+
