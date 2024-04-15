@@ -1,6 +1,4 @@
 Attribute VB_Name = "DataHandling"
-Option Explicit
-
 'Variables used in multiple subroutines
 Public shForm       As Worksheet
 Public sOrderNumber As String
@@ -312,11 +310,8 @@ Sub Submit_Form()
         sEndUser = shForm.Range("G9")
         sPrinterName = shForm.Range("G19")
         
-        'Get ZPL Strings for Label
-        Call Get_Label_Strings(sPrinterName)
-        
         For i = 1 To iMachinesOrdered
-            
+        
             iMachineRow = 11 + i
             
             sPantherModel = shForm.Range("G" & iMachineRow).Value
@@ -380,6 +375,9 @@ Sub Submit_Form()
                         .Range(7) = sLabelSize       'label size
                         
                         sSerialNumber = .Range(1)
+                        
+                        'Get ZPL Strings for Toe Tag Label
+                        Call Get_Label_Strings(sPrinterName)
                         
                         sLabelZPL = "^XA^LH0,0^CI0^FD" & sLabelPart1 & sCustomer & sLabelPart2 & sEndUser & sLabelPart3 & sPantherModel + sLabelPart4 & sLabelSize _
                                     & sLabelPart5 & CStr(iCurrent) & " of " & CStr(iNumOrdered) & sLabelPart6 & sOrderNumber & sLabelPart7 & IIf(InStr(sPantherModel, "SLIDE") = 0, sSerialNumber & "^FS^PQ2^XZ", "^FS^PQ2^XZ")
@@ -495,10 +493,8 @@ Sub Print_Tags()
         sEndUser = shForm.Range("G9")
         sPrinterName = shForm.Range("G19")
         
-        'Generate ZPL for Printing
-        Get_Label_Strings (sPrinterName)
-        
         For i = 1 To iMachinesOrdered
+
             bSlideOptions = False
             
             iMachineRow = 11 + i
@@ -548,6 +544,9 @@ Sub Print_Tags()
                 If InStr(sPantherModel, "MNS") <> 0 Then
                     sSerialNumber = Application.InputBox("Please Enter Serial Number of Printer")
                 End If
+                
+                'Get ZPL Strings for Toe Tag Label
+                Call Get_Label_Strings(sPrinterName)
             
                 If InStr(sPantherModel, "SLIDE") <> 0 Then
                     sSlideHand = shForm.Range("J" & iMachineRow)
