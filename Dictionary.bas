@@ -1,4 +1,5 @@
 Attribute VB_Name = "Dictionary"
+
 '@IgnoreModule ImplicitDefaultMemberAccess, IndexedDefaultMemberAccess, ProcedureNotUsed, ModuleWithoutFolder
 Option Explicit 'Force explicit variable declaration.
 
@@ -33,10 +34,17 @@ For i = 1 To lColumnCount
         sCurrentFirmware = MyTable.ListColumns(i).Name
         'Check To See if Cell is Empty
         If Not Trim$(myArray(X, i) & vbNullString) = vbNullString Then
-            If myArray(X, i) = sPantherModel Then bFirmwareFound = True: sModelName = sCurrentFirmware: Exit For
+            If myArray(X, i) = sPantherModel Then
+                bFirmwareFound = True
+                sModelName = sCurrentFirmware
+                Exit For
+            End If
         End If
         Next X
-    If bFirmwareFound Then firmwareExists = True: Exit For
+    If bFirmwareFound Then
+        firmwareExists = True
+        Exit For
+    End If
     Next i
     If Not bFirmwareFound Then firmwareExists = False
     
@@ -128,5 +136,3 @@ If Not headerCell Is Nothing Then
 End If
 
 End Sub
-
-
