@@ -316,7 +316,7 @@ Sub Submit_Form()
             
             sPantherModel = shForm.Range("G" & iMachineRow).Value
             Call Firmware_Dictionary(sPantherModel)
-            If firmwareExists = False And InStr(sPantherModel, "SLIDE") = 0 Then
+            If firmwareExists = False And InStr(sPantherModel, "SLIDE") = 0 And InStr(sPantherModel, "MNS") = 0 And InStr(sPantherModel, "STAND") = 0 Then
                 addNewModelForm.Show
             End If
             sPantherOptions = shForm.Range("J" & iMachineRow).Value
@@ -506,7 +506,7 @@ Sub Print_Tags()
             Firmware_Dictionary (sPantherModel)
             'Check To See If Options Work with the given model
             Validate_Options_Input
-            If firmwareExists = False And InStr(sPantherModel, "SLIDE") = 0 Then
+            If firmwareExists = False And InStr(sPantherModel, "SLIDE") = 0 And InStr(sPantherModel, "MNS") = 0 And InStr(sPantherModel, "STAND") = 0 Then
                 addNewModelForm.Show
             End If
             If IsNumeric(shForm.Range("H" & iMachineRow)) = False Then
