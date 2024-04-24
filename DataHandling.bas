@@ -141,8 +141,12 @@ Sub Get_Serial_Number_Label(sCustomerName, sPantherModel, sPantherPLC, sSerialNu
         sServoFirmware = shForm.Range("O21")
         sServoExt = shForm.Range("Q21")
     Case "STAND"
-        sSystemFirmware = shForm.Range("T21")
-        sSystemExt = shForm.Range("V21")
+        sPLCFirmware = shForm.Range("T21")
+        sPLCFileExt = shForm.Range("V21")
+        sHMIFirmware = shForm.Range("T22")
+        sHMIFileExt = shForm.Range("V22")
+        sServoFirmware = shForm.Range("T23")
+        sServoExt = shForm.Range("V23")
     Case "MNS"
         sServoFirmware = "9-12-17"
     End Select
@@ -166,8 +170,8 @@ Sub Get_Serial_Number_Label(sCustomerName, sPantherModel, sPantherPLC, sSerialNu
     If sModelName = "Shadow" Then
         sSerialNumberZPL = sLabelPart1 + sLabelPart2 + sSerialNumber + sLabelPart3 + "SERVO: " + sServoFirmware + sServoExt + sLabelPart4 + sLabelPart5 + "^FS^PQ2,0,1,Y,^XZ"
     ElseIf sModelName = "STAND" Then
-        sSerialNumberZPL = sLabelPart1 + sLabelPart2 + sSerialNumber + sLabelPart3 + "SYSTEM: " + sSystemFirmware + sSystemExt + sLabelPart4 + sLabelPart5 _
-        + "^FS^PQ2,0,1,Y^XZ"
+        sSerialNumberZPL = sLabelPart1 + sLabelPart2 + sSerialNumber + sLabelPart3 + "PLC: " + sPLCFirmware + sPLCFileExt + sLabelPart4 + "HMI: " + sHMIFirmware _
+        + sHMIFileExt + sLabelPart5 + "SERVO: " + sServoFirmware + sServoExt + "^FS^PQ2,0,1,Y^XZ"
     ElseIf InStr(sPantherModel, "MNS") <> 0 Then
         sSerialNumberZPL = sLabelPart1 + sLabelPart2 + sSerialNumber + sLabelPart3 + "SERVO: " + sServoFirmware + sLabelPart4 + sLabelPart5 _
         + "^FS^PQ2,0,1,Y^XZ"
@@ -347,7 +351,7 @@ Sub Submit_Form()
                     Set NewRow = loTable.ListRows.Add
                     
                     'Print Worksheet to Default Printer
-                    Print_Screen
+                    'Print_Screen
                     
                     With NewRow
                         'increment serial number
@@ -388,7 +392,9 @@ Sub Submit_Form()
                         If sModelName = "Shadow" Then
                             .Range(8) = sServoFirmware & sServoExt 'servo program
                         ElseIf sModelName = "STAND" Then
-                            .Range(8) = sSystemFirmware & sSystemExt 'system program
+                            .Range(7) = sPLCFirmware & sPLCFileExt 'plc program
+                            .Range(8) = sHMIFirmware & sHMIFileExt 'hmi program
+                            .Range(9) = sServoFirmware & sServoExt 'servo program
                         ElseIf sModelName = "MNS" Then
                             .Range(8) = sServoFirmware 'servo program
                         Else
@@ -535,11 +541,11 @@ Sub Print_Tags()
                 End If
             End If
             
-            If InStr(sPantherModel, "STAND") <> 0 Then
-                sSerialNumber = sOrderNumber
-            End If
-            
             For iCurrent = 1 To iNumOrdered
+            
+                If InStr(sPantherModel, "STAND") <> 0 Then
+                    sSerialNumber = sOrderNumber & "-" & iCurrent
+                End If
             
                 If InStr(sPantherModel, "MNS") <> 0 Then
                     sSerialNumber = Application.InputBox("Please Enter Serial Number of Printer")
