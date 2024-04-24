@@ -27,6 +27,17 @@ lColumnCount = MyTable.DataBodyRange.Columns.Count
 'Create Array List from Table
 myArray = MyTable.DataBodyRange
 
+'Check for STAND or MNS machine which don't go in dict
+If InStr(sPantherModel, "STAND") <> 0 Then
+        firmwareExists = True
+        sModelName = "STAND"
+        Exit Sub
+ElseIf InStr(sPantherModel, "MNS") <> 0 Then
+        firmwareExists = True
+        sModelName = "MNS"
+        Exit Sub
+End If
+
 'Loop through every item in each column and see if matching firmware exists
 'TODO: Add Logic to Create Dictionary from Table
 For i = 1 To lColumnCount
