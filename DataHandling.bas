@@ -565,7 +565,7 @@ Sub Print_Tags()
                 ElseIf InStr(sPantherModel, "STAND") <> 0 Then
                     sLabelZPL = "^XA^LH0,0^CI0 ^FD" & sLabelPart1 & sCustomer & sLabelPart2 & sEndUser & sLabelPart3 & sPantherModel + sLabelPart4 & sLabelSize _
                                 & sLabelPart5 & CStr(iCurrent) & " of " & CStr(iNumOrdered) & sLabelPart6 & sOrderNumber & sLabelPart7 _
-                                & sSerialNumber & "-" & iCurrent & "^FS^PQ2^XZ"
+                                & sSerialNumber & "^FS^PQ2^XZ"
                 Else
                     sLabelZPL = "^XA^LH0,0^CI0 ^FD" & sLabelPart1 & sCustomer & sLabelPart2 & sEndUser & sLabelPart3 & sPantherModel + sLabelPart4 & sLabelSize _
                                 & sLabelPart5 & CStr(iCurrent) & " of " & CStr(iNumOrdered) & sLabelPart6 & sOrderNumber & sLabelPart7 _
