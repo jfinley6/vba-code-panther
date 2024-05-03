@@ -65,13 +65,13 @@ Sub Get_Label_Strings(sPrinterName)
     Select Case sPrinterName
         Case "Service"
             sPrinterIP = "192.168.17.97"
-            sLabelPart1 = "^FS^FB500,2^CF0,80,80^FT40,85^A0N,30,40^FD"
-            sLabelPart2 = "^FS^FB600,2^CF0,80,80^FT40,155^A0N,30,40^FD"
-            sLabelPart3 = "^FS^FT40,200^A0N,30,40^FD"
-            sLabelPart4 = "^FS^FT40,250^A0N,30,40^FD"
-            sLabelPart5 = "^FS^FT40,300^A0N,30,40^FD"
-            sLabelPart6 = "^FS^FT300,300^A0N,30,40^FD"
-            sLabelPart7 = "^FS^FT300,250^A0N,30,40^FD"
+            sLabelPart1 = "^FS^FB500,2^CF0,80,80^FT40,75^A0N,30,40^FD"
+            sLabelPart2 = "^FS^FB600,2^CF0,80,80^FT40,145^A0N,30,40^FD"
+            sLabelPart3 = "^FS^FT40,190^A0N,30,40^FD"
+            sLabelPart4 = "^FS^FT40,240^A0N,30,40^FD"
+            sLabelPart5 = "^FS^FT40,290^A0N,30,40^FD"
+            sLabelPart6 = "^FS^FT300,290^A0N,30,40^FD"
+            sLabelPart7 = "^FS^FT300,240^A0N,30,40^FD"
         Case "Darkside"
             sPrinterIP = "192.168.17.33"
             sLabelPart1 = "^FS^FB800,2^FT60,100^A0N,44,59^FD"
@@ -153,11 +153,11 @@ Sub Get_Serial_Number_Label(sCustomerName, sPantherModel, sPantherPLC, sSerialNu
     
     Select Case sPrinterName
         Case "Service"
-            sLabelPart1 = "^XA^FO50,180^GB544,0,2^FS^FO50,230^GB544,0,2^FS^FO50,280^GB544,0,2^FS"
-            sLabelPart2 = "^FO10,55^CF0,80,80^FB600,1,0,C^FD"
-            sLabelPart3 = "^FS^CF0,30,30^FO80,146^FB650,1,,L,^FD"
-            sLabelPart4 = "^FS^CF0,30,30^FO80,196^FB650,1,,L, ^FD"
-            sLabelPart5 = "^FS^CF0,30,30^FO80,246^FB650,1,,L, ^FD"
+            sLabelPart1 = "^XA^FO30,160^GB544,0,2^FS^FO30,210^GB544,0,2^FS^FO30,260^GB544,0,2^FS"
+            sLabelPart2 = "^FO0,35^CF0,80,80^FB600,1,0,C^FD"
+            sLabelPart3 = "^FS^CF0,30,30^FO60,126^FB650,1,,L,^FD"
+            sLabelPart4 = "^FS^CF0,30,30^FO60,176^FB650,1,,L, ^FD"
+            sLabelPart5 = "^FS^CF0,30,30^FO60,226^FB650,1,,L, ^FD"
         Case "Darkside"
             sLabelPart1 = "^XA^FO90,235^GB800,2,2^FS^FO90,310^GB800,2,2^FS^FO90,385^GB800,2,2^FS"
             sLabelPart2 = "^FO20,35^CF0,118,118^FB900,1,0,C^FD"
@@ -238,77 +238,7 @@ Sub Submit_Form()
         
         sOrderNumber = shForm.Range("G5")
         
-        'Duplicate Order Search
-        Dim rgFound As Range
-        Dim iConfirmDuplicate
-        
-        Set rgFound = ThisWorkbook.Sheets("P9").Range("C:C").Find(sOrderNumber)
-        If rgFound Is Nothing Then
-            Set rgFound = ThisWorkbook.Sheets("P5c").Range("C:C").Find(sOrderNumber)
-            If rgFound Is Nothing Then
-                Set rgFound = ThisWorkbook.Sheets("FLEX").Range("C:C").Find(sOrderNumber)
-                If rgFound Is Nothing Then
-                    Set rgFound = ThisWorkbook.Sheets("SHADOW").Range("C:C").Find(sOrderNumber)
-                    If rgFound Is Nothing Then
-                        Set rgFound = ThisWorkbook.Sheets("STAND").Range("C:C").Find(sOrderNumber)
-                        If rgFound Is Nothing Then
-                            Set rgFound = ThisWorkbook.Sheets("MNS").Range("C:C").Find(sOrderNumber)
-                                If rgFound Is Nothing Then
-                                
-                                Else
-                                    iConfirmDuplicate = MsgBox("Order Number already exists in MNS : " & rgFound.Address & vbNewLine & vbNewLine _
-                                    & "Submitting will create duplicate serial numbers For this order" & vbNewLine _
-                                    & "Are you sure you want To proceed?", vbYesNo + vbQuestion, "WARNING: Duplicate Order Found")
-                                    If iConfirmDuplicate = vbNo Then
-                                        shForm.Range("I5") = ""
-                                        Exit Sub
-                                    End If
-                                End If
-                        Else
-                            iConfirmDuplicate = MsgBox("Order Number already exists in STAND : " & rgFound.Address & vbNewLine & vbNewLine _
-                            & "Submitting will create duplicate serial numbers For this order" & vbNewLine _
-                            & "Are you sure you want To proceed?", vbYesNo + vbQuestion, "WARNING: Duplicate Order Found")
-                            If iConfirmDuplicate = vbNo Then
-                                shForm.Range("I5") = ""
-                                Exit Sub
-                            End If
-                        End If
-                    Else
-                        iConfirmDuplicate = MsgBox("Order Number already exists in SHADOW : " & rgFound.Address & vbNewLine & vbNewLine _
-                        & "Submitting will create duplicate serial numbers For this order" & vbNewLine _
-                        & "Are you sure you want To proceed?", vbYesNo + vbQuestion, "WARNING: Duplicate Order Found")
-                        If iConfirmDuplicate = vbNo Then
-                            shForm.Range("I5") = ""
-                            Exit Sub
-                        End If
-                    End If
-                Else
-                    iConfirmDuplicate = MsgBox("Order Number already exists in FLEX : " & rgFound.Address & vbNewLine & vbNewLine _
-                    & "Submitting will create duplicate serial numbers For this order" & vbNewLine _
-                    & "Are you sure you want To proceed?", vbYesNo + vbQuestion, "WARNING: Duplicate Order Found")
-                    If iConfirmDuplicate = vbNo Then
-                        shForm.Range("I5") = ""
-                        Exit Sub
-                    End If
-                End If
-            Else
-                iConfirmDuplicate = MsgBox("Order Number already exists in P5c : " & rgFound.Address & vbNewLine & vbNewLine _
-                & "Submitting will create duplicate serial numbers For this order" & vbNewLine _
-                & "Are you sure you want To proceed?", vbYesNo + vbQuestion, "WARNING: Duplicate Order Found")
-                If iConfirmDuplicate = vbNo Then
-                    shForm.Range("I5") = ""
-                    Exit Sub
-                End If
-            End If
-        Else
-            iConfirmDuplicate = MsgBox("Order Number already exists in P9 : " & rgFound.Address & vbNewLine & vbNewLine _
-            & "Submitting will create duplicate serial numbers For this order" _
-            & vbNewLine & "Are you sure you want To proceed?", vbYesNo + vbQuestion, "WARNING: Duplicate Order Found")
-            If iConfirmDuplicate = vbNo Then
-                shForm.Range("I5") = ""
-                Exit Sub
-            End If
-        End If
+        FormValidation.Duplicate_Search (sOrderNumber)
         
         sCustomer = shForm.Range("G7")
         sEndUser = shForm.Range("G9")
@@ -351,7 +281,7 @@ Sub Submit_Form()
                     Set NewRow = loTable.ListRows.Add
                     
                     'Print Worksheet to Default Printer
-                    'Print_Screen
+                    Print_Screen
                     
                     With NewRow
                         'increment serial number
@@ -418,28 +348,6 @@ Sub Submit_Form()
         Save_Document
         End
     End If
-End Sub
-
-Sub Duplicate_Search(sOrderNumber)
-    Dim rgFound     As Range
-    
-    Set rgFound = ThisWorkbook.Sheets("P9").Range("C:C").Find(sOrderNumber)
-    If rgFound Is Nothing Then
-        Set rgFound = ThisWorkbook.Sheets("P5c").Range("C:C").Find(sOrderNumber)
-        If rgFound Is Nothing Then
-            Set rgFound = ThisWorkbook.Sheets("FLEX").Range("C:C").Find(sOrderNumber)
-            If rgFound Is Nothing Then
-                Exit Sub
-            Else
-                MsgBox ("Order Number already exists in FLEX : " & rgFound.Address)
-            End If
-        Else
-            MsgBox ("Order Number already exists in P5c : " & rgFound.Address)
-        End If
-    Else
-        MsgBox ("Order Number already exists in P9 : " & rgFound.Address)
-    End If
-    
 End Sub
 
 Sub Print_Machine_Tags(sZPL As String, sPrinterIP As String)
