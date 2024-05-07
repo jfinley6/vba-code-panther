@@ -7,7 +7,8 @@ Sub Repopulate_Form(Target, Cancel)
     If Not Intersect(Target, Range(WorkSheetRange)) Is Nothing Then '<- Check column is in table
       With Intersect(Target.EntireRow, ActiveSheet.UsedRange)
         'Check if Order is Blank
-        If Target.EntireRow.Cells(1, 3) <> "" Then
+        
+        If Target.EntireRow.Cells(1, 3) <> "" And Target.Column = "1" Then
             Call Copy_Table_Values(Target)
             Cancel = True
             Form.Activate
